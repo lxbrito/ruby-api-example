@@ -1,9 +1,11 @@
 class Api
   resource :users do
+    desc 'Return all users'
     params do
       includes :basic_search
     end
     get do
+      authenticate!
       users = SEQUEL_DB[:users].all
       present users, with: ApiEntities::UserEntity
     end
@@ -14,6 +16,7 @@ class Api
         requires :last_name, type:String
         requires :email, type:String
         requires :password, type:String
+        optional :born_on, type:String
       end
     end
     post do
@@ -28,5 +31,47 @@ class Api
       end
 
     end
+
+    params do
+      optional :user, type: Hash do
+        requires :first_name, type:String
+        requires :last_name, type:String
+        #requires :email, type:String #Do not change email as it would include confirmation logic
+        optional :born_on, type:String
+      end
+    end
+    put '/:id' do
+      authenticate!
+      user = Models::User.find(id: params[:id])
+      current_user.can?(:edit, user)
+
+    end
+
+    params do
+      optional :user, type: Hash do
+        requires :email, type:String
+        requires :new_password, type:String
+        requires :confirm_password, type:String
+      end
+    end
+    patch '/:id/reset_password' do
+      authenticate!
+    end
+
+    params do
+      optional :user, type: Hash do
+        requires :email, type:String
+        requires :password, type:String
+      end
+    end
+    post '/login' do
+      login = params[:user]
+      user = Models::User.where(email:login[:email], password: login[:password]).first
+      error!('401 Unauthorized', 401) unless user
+      token = get_token(user)
+      {token: token }
+    end
+
+
   end
 end

@@ -6,7 +6,7 @@ describe 'POST /api/users' do
     user = build(:user)
     post "api/v1.0/users", user: JSON.parse(Api::ApiEntities::UserParamsEntity.represent(user).to_json) #this sucks, all I wanted was a valid hash. serializable_hash doesn't work out of the box
     created = Api::Models::User.last
-    expect(Api::ApiEntities::UserEntity.represent(created).to_json).to eq Api::ApiEntities::UserEntity.represent(user).to_json
+    expect(Api::ApiEntities::UserParamsEntity.represent(created).to_json).to eq Api::ApiEntities::UserParamsEntity.represent(user).to_json
   end
 
   it 'should not create an invalid user' do

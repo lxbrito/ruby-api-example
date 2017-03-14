@@ -23,3 +23,4 @@ DATABASE_URL          = ENV.fetch('DATABASE_URL').freeze
 MAIL_URL              = ENV.fetch('MAIL_URL').freeze
 SYSTEM_EMAIL          = ENV.fetch('SYSTEM_EMAIL').freeze
 SITE_URL              = ENV.fetch('SITE_URL').freeze
+TOKEN_SECRET          = ENV.fetch('TOKEN_SECRET').freeze

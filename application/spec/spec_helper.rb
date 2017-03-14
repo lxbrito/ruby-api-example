@@ -23,7 +23,8 @@ module RSpecHelpers
   include Rack::Test::Methods
 
   def login_as user
-    Api.class_variable_set(:@@current_user, user)
+    post "api/v1.0/users/login", user:{email:user.email, password:user.password}
+    {'HTTP_AUTHORIZATION' => "TOKEN token="+response_body[:token]}
   end
 
   def app

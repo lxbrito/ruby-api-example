@@ -57,3 +57,4 @@ build-iPhoneSimulator/
 
 # Temporary files
 ~*.xlsx
+/.tool-versions
