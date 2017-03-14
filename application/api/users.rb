@@ -44,7 +44,7 @@ class Api
     put '/:id' do
       authenticate!
       user = Models::User.find(id: params[:id])
-      current_user.can?(:edit, user)
+      error!('401 Unauthorized', 401) unless current_user.can?(:edit, user)
       user.update(params[:user])
       present user, with: ApiEntities::UserEntity
     end

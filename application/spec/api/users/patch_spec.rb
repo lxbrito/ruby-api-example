@@ -10,8 +10,18 @@ describe 'PUT /api/users/:id' do
     expect(true).to eq true
   end
 
-  it 'should not create an invalid user' do
-    expect(true).to eq true
+
+  it 'should not allow an invalid user' do
+    get "api/v1.0/users",nil , {}
+    expect(last_response.status).to eq 401
+  end
+
+  it 'should not allow update other user' do
+    authorization_header = login_as(@u2)
+    get "api/v1.0/users",nil , authorization_header
+    body = response_body
+    put "api/v1.0/users/#{@u1.id}", user:{"first_name":"Jose", "last_name":"Anon", "born_on":"1854-12-05 23:23:23"}
+    expect(last_response.status).to eq 401
   end
 
 end
