@@ -31,6 +31,20 @@ require 'lib/io'
 # load active support helpers
 require 'active_support'
 require 'active_support/core_ext'
+require 'redis'
+
+if RACK_ENV == 'test'
+  require 'sidekiq/testing'
+  Sidekiq::Testing.fake!
+else
+  Sidekiq.configure_server do |config|
+    config.redis = REDIS_CONN
+  end
+
+  Sidekiq.configure_client do |config|
+    config.redis = REDIS_CONN
+  end
+end
 
 # require all models
 Dir['./application/models/*.rb'].each { |rb| require rb }
@@ -60,6 +74,7 @@ class Api < Grape::API
 
   Dir['./application/api_entities/**/*.rb'].each { |rb| require rb }
   Dir['./application/api/**/*.rb'].each { |rb| require rb }
+  Dir['./application/workers/**/*.rb'].each { |rb| require rb }
 
   add_swagger_documentation \
     mount_path: '/docs'

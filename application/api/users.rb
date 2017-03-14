@@ -24,6 +24,7 @@ class Api
       user_form = Models::UserForm.new(params[:user]).validate
       if user_form.success?
         user = Models::User.new(user_form.to_hash).save
+        Workers::RegistrationMailWorker.perform_async(user)
         present user, with: ApiEntities::UserEntity
       else
         {
@@ -62,6 +63,7 @@ class Api
       pass_form = Models::PasswordForm.new(params[:user]).validate
       if pass_form.success?
         user.update(password: pass_form["new_password"])
+        Workers::PasswordChangeMailWorker.perform_async(user)
         {
             message:"password successfully changed"
         }

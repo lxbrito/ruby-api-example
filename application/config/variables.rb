@@ -24,3 +24,4 @@ MAIL_URL              = ENV.fetch('MAIL_URL').freeze
 SYSTEM_EMAIL          = ENV.fetch('SYSTEM_EMAIL').freeze
 SITE_URL              = ENV.fetch('SITE_URL').freeze
 TOKEN_SECRET          = ENV.fetch('TOKEN_SECRET').freeze
+REDIS_CONN            = ENV.fetch("REDIS_CONN").freeze

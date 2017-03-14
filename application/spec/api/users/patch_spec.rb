@@ -14,6 +14,7 @@ describe 'PATCH /api/users/:id' do
     expect(response_body).to eq({message:"password successfully changed"})
     expect(@u1.password).not_to eq pass
     expect(updated.password).to eq pass
+    expect(Api::Workers::PasswordChangeMailWorker.jobs.size).to eq 1 #horrible test
   end
 
   it 'should reset password only when they match' do
