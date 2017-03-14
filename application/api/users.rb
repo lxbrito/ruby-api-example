@@ -51,13 +51,25 @@ class Api
 
     params do
       optional :user, type: Hash do
-        requires :email, type:String
         requires :new_password, type:String
         requires :confirm_password, type:String
       end
     end
     patch '/:id/reset_password' do
       authenticate!
+      user = Models::User.find(id: params[:id])
+      error!('401 Unauthorized', 401) unless current_user.can?(:edit, user)
+      pass_form = Models::PasswordForm.new(params[:user]).validate
+      if pass_form.success?
+        user.update(password: pass_form["new_password"])
+        {
+            message:"password successfully changed"
+        }
+      else
+        {
+          errors: pass_form.errors
+        }
+      end
     end
 
     params do
