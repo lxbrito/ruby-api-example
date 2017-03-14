@@ -44,13 +44,6 @@ end
 
 class Api
   helpers do
-    def current_user
-      begin
-        @current_user = Api.class_variable_get(:@@current_user)
-      rescue
-        nil
-      end
-    end
   end
 end
 

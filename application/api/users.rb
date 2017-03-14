@@ -1,4 +1,5 @@
 class Api
+  include Auth
   resource :users do
     desc 'Return all users'
     params do
@@ -44,7 +45,8 @@ class Api
       authenticate!
       user = Models::User.find(id: params[:id])
       current_user.can?(:edit, user)
-
+      user.update(params[:user])
+      present user, with: ApiEntities::UserEntity
     end
 
     params do

@@ -11,7 +11,8 @@ class Api
       def authenticate!
         data = get_data_from_token(get_token_from_header)
         user_id = data.fetch("data", {}).fetch("user_id")
-        current_user = Models::User.find(id: user_id)
+        user= Models::User.find(id: user_id)
+        Thread.current[:user]= user
         error!('401 Unauthorized', 401) unless current_user
       end
 
@@ -21,11 +22,7 @@ class Api
       end
 
       def current_user
-        @current_user
-      end
-
-      def current_user=(user)
-        @current_user = user
+        Thread.current[:user]
       end
 
       private
