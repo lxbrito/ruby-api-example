@@ -33,16 +33,30 @@ require 'active_support'
 require 'active_support/core_ext'
 require 'redis'
 
+require 'sidekiq'
+require 'mail'
+
 if RACK_ENV == 'test'
   require 'sidekiq/testing'
   Sidekiq::Testing.fake!
 else
   Sidekiq.configure_server do |config|
-    config.redis = REDIS_CONN
+    config.redis = {url: REDIS_CONN}
   end
 
   Sidekiq.configure_client do |config|
-    config.redis = REDIS_CONN
+    config.redis = {url: REDIS_CONN}
+  end
+end
+
+if RACK_ENV == 'test'
+  Mail.defaults do
+    delivery_method :test
+  end
+else
+  Mail.defaults do
+    url = URI.parse(MAIL_URL)
+    delivery_method :smtp, {address:url.host, port:url.port}
   end
 end
 
